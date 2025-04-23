@@ -8,6 +8,7 @@ const LoginForm = () => {
   const [state, formAction] = useFormState(login, {
     success: false,
     message: "",
+    errors: {},
   });
   const { pending } = useFormStatus();
 
@@ -31,7 +32,12 @@ const LoginForm = () => {
         action={formAction}
         className="flex flex-col gap-4 w-[350px] mx-auto mt-10 text-sm"
       >
-        <div className="flex items-center gap-2 border rounded-full px-4 py-3 bg-white text-neutral-700">
+        {/* Email */}
+        <div
+          className={`flex items-center gap-2 border px-4 py-3 rounded-full bg-white text-neutral-700 ${
+            state.errors?.email ? "border-red-400" : ""
+          }`}
+        >
           <svg
             className="w-4 h-4 text-neutral-400"
             data-slot="icon"
@@ -52,12 +58,21 @@ const LoginForm = () => {
             name="email"
             type="email"
             value={email}
-            placeholder="email@domain.com"
+            placeholder="email@zod.com"
             onChange={(e) => setEmail(e.target.value)}
             className="flex-1 outline-none bg-transparent placeholder:text-neutral-400"
           />
         </div>
-        <div className="flex items-center gap-2 border rounded-full px-4 py-3 bg-white text-neutral-700">
+        {state.errors?.email && (
+          <p className="text-xs text-red-500 pl-4">{state.errors.email}</p>
+        )}
+
+        {/* Username */}
+        <div
+          className={`flex items-center gap-2 border px-4 py-3 rounded-full bg-white text-neutral-700 ${
+            state.errors?.username ? "border-red-400" : ""
+          }`}
+        >
           <svg
             className="w-4 h-4 text-neutral-400"
             data-slot="icon"
@@ -82,9 +97,14 @@ const LoginForm = () => {
             className="flex-1 outline-none bg-transparent placeholder:text-neutral-400"
           />
         </div>
+        {state.errors?.username && (
+          <p className="text-xs text-red-500 pl-4">{state.errors.username}</p>
+        )}
+
+        {/* Password */}
         <div
-          className={`flex items-center gap-2 border px-4 py-3 rounded-full bg-white ${
-            !state.success && state.message ? "border-red-400" : ""
+          className={`flex items-center gap-2 border px-4 py-3 rounded-full bg-white text-neutral-700 ${
+            state.errors?.password ? "border-red-400" : ""
           }`}
         >
           <svg
@@ -106,19 +126,21 @@ const LoginForm = () => {
           <input
             name="password"
             type="password"
-            placeholder="•••••"
+            placeholder="••••••••••"
             ref={passwordRef}
             className="flex-1 outline-none bg-transparent placeholder:text-neutral-400"
           />
         </div>
+        {state.errors?.password && (
+          <p className="text-xs text-red-500 pl-4">{state.errors.password}</p>
+        )}
 
+        {/* Global message */}
         {!state.success && state.message && (
           <p className="text-sm text-red-500">{state.message}</p>
         )}
-        {state.success && (
-          <p className="text-sm text-green-600">{state.message}</p>
-        )}
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={pending}
@@ -126,6 +148,11 @@ const LoginForm = () => {
         >
           {pending ? "Loading..." : "Log in"}
         </button>
+        {state.success && (
+          <p className="text-sm bg-green-600 text-white py-2 rounded-lg text-center">
+            {state.message}
+          </p>
+        )}
       </form>
     </div>
   );
